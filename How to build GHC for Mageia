@@ -1,0 +1,166 @@
+#################################################################################################
+                                    GHC version 9.6.7
+#################################################################################################
+
+=== Important links ===
+https://gitlab.haskell.org/ghc/ghc Git repo for GHC
+https://gitlab.haskell.org/ghc/ghc/-/wikis/GHC-Status#ghc-status to see which version is stable.
+https://www.haskell.org/ghcup/install/ To keep track of any changes regarding on how to install GHC using ghcup
+https://gitlab.haskell.org/ghc/ghc/blob/master/hadrian/doc/flavours.md To check which build flavours to use for hadrian
+
+=== Versioning info to prevent failure when trying to build ===
+perl version needs to be higher/newer/later than 5
+sed version needs to be higher/newer/later than 2.04 as 2.04 has a bug in it
+
+=== Root priveligies ===
+As you need to install dependencies for GHC you need to give your user sudo priveligies,
+the easiest way to do so is to open userdrake from terminal (give the root password when asked in
+the popup window and hit Return/Enter to see the Userdrake window.
+Now highlight your user and rightclick, choose Edit, click on the Groups tab, scroll down to wheel and tick the box for it.
+Now exit userdrake aftwards and relogin to your desktop environment for the changes to take effect.
+
+!!IMPORTANT WARNING!!
+Giving user sudo priveligies means that your user can now do the commands that root can do using the sudo command, but please use the sudo power with caution because as root you have power over everything in the system. Make sure to do backups of important files first before changing this in case you need to reinstall. I'm NOT to be held responsible if you use sudo carelessly, remember that. !!IMPORTANT WARNING!!
+
+#################################################################################################
+
+=== Is my computer 32 or 64 bit? ===
+Lets first find out if your computer uses either a 32 bit CPU or a 64 bit CPU:
+
+Open a terminal window and type
+
+arch
+
+and hit the Return/Enter key to get the result.
+
+If you see i586 i686, then that means that your computer uses 32 bit instructions.
+If you instead see x86_64 or aarch64, then that means that your computer uses 64 bit instructions, the later being 64 bit instructions for ARM (arm architecture 64).
+
+#################################################################################################
+
+=== What dependencies do I have to install? ===
+
+For x86_64 or aarch64 based computers
+
+sudo urpmi autoconf automake coreutils curl diff gcc gcc-c++ git glibc-devel lib64ffi8 lib64gmp10 lib64ncurses5 libtool llvm lndir makeinfo perl pkgconf-pkg-config python3 python3-sphinx sed texlive-dist xz --auto
+
+For i686 based computers
+
+sudo urpmi autoconf automake coreutils curl diff gcc gcc-c++ git glibc-devel libffi8 libgmp10 libncurses5 libtool llvm lndir makeinfo perl pkgconf-pkg-config python3 python3-sphinx sed texlive-dist xz --auto
+
+#################################################################################################
+
+=== How do I setup Git so that I can clone? ===
+
+git config --global user.name "Replace this text with your real name"
+git config --global user.email "Replace this text with a valid email adress"
+
+#################################################################################################
+
+=== I've setup Git with proper credentials, what's the next step? ===
+Now you need to install GHC and it's related package dependencies and libraries using ghcup since at the time of writing this guide (2025-04-27) Mageia hasn't packaged cabal, happy, alex.
+To install ghcup, open a terminal window (if you don't have a terminal window running already)
+and run:
+
+curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
+
+Footnote: Please keep track of changes to this command by reading the link at the top to visit the website for GHCUP so that you make sure to use the right command.
+Also, at the time of writing this guide the GHC version 9.6.7 (that gets installed with ghcup) complains about happy being to new so you need to also install an earlier version of happy plus you also need to install hscolour.
+
+To do so run:
+cabal update && cabal install happy-1.20.0 hscolour
+
+#################################################################################################
+
+=== What do I do now to start compiling GHC from source? ===
+
+Run the follow in the terminal window
+git clone --recursive https://gitlab.haskell.org/ghc/ghc.git -b ghc-9.6.7-release
+cd ghc
+./boot
+./configure --prefix=%{_prefix}
+--libdir=%{_libdir}
+--host=mageia
+--build=x86_64-linux-gnu
+
+Footnote: Depending on many factors regarding the hardware your computer has this entire line of commands will take time so grab a cup of java or tea and maybe even a scone and just wait until you see something like this:
+
+Configure completed successfully.
+
+   Building GHC version  : 9.6.7
+          Git commit id  : 2b22b6ae69c94e721fde8af0108eb0feed97cc82
+
+   Build platform        : x86_64-linux-gnu
+   Host platform         : x86_64-mageia-linux
+   Target platform       : x86_64-mageia-linux
+
+   Bootstrapping using   : /home/yourusernamehere/.ghcup/bin/ghc
+      which is version   : 9.6.7
+      with threaded RTS? : YES
+
+   Using (for bootstrapping) : gcc
+   Using gcc                 : /usr/bin/gcc
+      which is version       : 12.3.0
+      linker options         : -fuse-ld=gold
+   Building a cross compiler : NO
+   Unregisterised            : NO
+   TablesNextToCode          : YES
+   Build GMP in tree         : NO
+   hs-cpp       : /usr/bin/gcc
+   hs-cpp-flags : -E -undef -traditional
+   ar           : /usr/bin/ar
+   ld           : ld.gold
+   nm           : /usr/bin/nm
+   objdump      : /usr/bin/objdump
+   ranlib       : /usr/bin/ranlib
+   otool        : otool
+   install_name_tool : install_name_tool
+   windres      : 
+   dllwrap      : 
+   genlib       : 
+   Happy        : /home/yourusernamehere/.cabal/bin/happy (1.20.0)
+   Alex         : /home/yourusernamehere/.cabal/bin/alex (3.5.3.0)
+   sphinx-build : /usr/bin/sphinx-build
+   xelatex      : /usr/bin/xelatex
+   makeinfo     : /usr/bin/makeinfo
+   git          : /usr/bin/git
+   cabal-install : /home/yourusernamehere/.ghcup/bin/cabal
+
+   Using LLVM tools
+      clang : clang
+      llc   : llc
+      opt   : opt
+   HsColour : /home/yourusernamehere/.cabal/bin/HsColour
+
+   Tools to build Sphinx HTML documentation available: YES
+   Tools to build Sphinx PDF documentation available: YES
+   Tools to build Sphinx INFO documentation available: YES
+----------------------------------------------------------------------
+
+For a standard build of GHC (fully optimised with profiling), type (g)make.
+
+To make changes to the default build configuration, copy the file
+mk/build.mk.sample to mk/build.mk, and edit the settings in there.
+
+For more information on how to configure your GHC build, see
+   https://gitlab.haskell.org/ghc/ghc/wikis/building
+
+#################################################################################################
+
+=== OK, so how do I build GHC now? ===
+
+Type hadrian/build -jx
+
+Footnote: Replace the x with the number of work threads you want to use for your CPU if the standard number is not of your liking.
+
+If you want to build a certain flavour other than the default, please refer to the top of this guide and see what flavours you can choose from.
+
+When you've found the proper flavour, run
+
+hadrian/build --flavour=addtheflavournamehereinstead
+
+#################################################################################################
+
+=== What about creating a binary dist archive? ===
+
+hadrian/build binary-dist
