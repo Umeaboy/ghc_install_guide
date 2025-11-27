@@ -14,13 +14,15 @@ sed version needs to be higher/newer/later than 2.04, as 2.04 has a bug in it
 
 === Root privileges ===
 As you need to install dependencies for GHC, you need to give your user sudo priveligies,
-the easiest way to do so is to open userdrake from the terminal (give the root password when asked in
-the popup window and hit Return/Enter to see the Userdrake window.
+the easiest way to do so is to open userdrake from the terminal (give the root password when asked in the popup window) and hit Return/Enter to see the Userdrake window.
 Now highlight your user and right-click, choose Edit, click on the Groups tab, scroll down to wheel and tick the box for it.
 Now exit userdrake aftwards and relogin to your desktop environment for the changes to take effect.
 
 !!IMPORTANT WARNING!!
-Giving a user sudo privileges means that your user can now do the commands that root can do using the sudo command, but please use the sudo power with caution because as root you have power over everything in the system. Make sure to do backups of important files first before changing this in case you need to reinstall. I'm NOT to be held responsible if you use sudo carelessly, remember that. !!IMPORTANT WARNING!!
+Giving a user sudo privileges means that your user can now do the commands that root can do using the sudo command, but please 
+use the sudo power with caution because as root you have power over everything in the system. Make sure to do backups of important 
+files first before changing this in case you need to reinstall. I'm NOT to be held responsible if you use sudo carelessly, remember that.
+!!IMPORTANT WARNING!!
 
 #################################################################################################
 
@@ -39,14 +41,17 @@ If you instead see x86_64 or aarch64, then that means that your computer uses 64
 #################################################################################################
 
 === What dependencies do I have to install? ===
+First let's install the packages that are the same on both architetures
+
+sudo urpmi autoconf automake coreutils curl diffutils gcc gcc-c++ git glibc-devel libtool llvm lndir make makeinfo perl pkgconf-pkg-config python3 python3-sphinx sed texlive-dist xz --auto
 
 For x86_64 or aarch64 based computers
 
-sudo urpmi autoconf automake coreutils curl diff gcc gcc-c++ git glibc-devel lib64ffi8 lib64gmp10 lib64ncurses5 libtool llvm lndir makeinfo perl pkgconf-pkg-config python3 python3-sphinx sed texlive-dist xz --auto
+sudo urpmi lib64ffi8 lib64gmp10 lib64gmp-devel lib64ncurses5 --auto
 
 For i686 based computers
 
-sudo urpmi autoconf automake coreutils curl diff gcc gcc-c++ git glibc-devel libffi8 libgmp10 libncurses5 libtool llvm lndir makeinfo perl pkgconf-pkg-config python3 python3-sphinx sed texlive-dist xz --auto
+sudo urpmi libffi8 libgmp10 libgmp-devel libncurses5 --auto
 
 #################################################################################################
 
@@ -64,11 +69,13 @@ and run:
 
 curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
 
+Accept the default suggestions for each of the questions it asks you. You may need to close the terminal window and open it again for the changes to the $PATH to take effect.
+
 Footnote: Please keep track of changes to this command by reading the link at the top to visit the website for GHCUP so that you make sure to use the right command.
-Also, at the time of writing this guide the GHC version 9.6.7 (that gets installed with ghcup) complains about happy being to new so you need to also install an earlier version of happy plus you also need to install hscolour.
+You now need to install hscolour.
 
 To do so run:
-cabal update && cabal install happy-1.20.0 hscolour
+cabal update && cabal install hscolour
 
 #################################################################################################
 
@@ -78,10 +85,7 @@ Run the follow in the terminal window
 git clone --recursive https://gitlab.haskell.org/ghc/ghc.git -b ghc-9.6.7-release
 cd ghc
 ./boot
-./configure --prefix=%{_prefix}
---libdir=%{_libdir}
---host=mageia
---build=x86_64-linux-gnu
+./configure --prefix=%{_prefix} --libdir=%{_libdir} --host=mageia --build=x86_64-linux-gnu
 
 Footnote: Depending on many factors regarding the hardware your computer has this entire line of commands will take time so grab a cup of java or tea and maybe even a scone and just wait until you see something like this:
 
