@@ -47,7 +47,7 @@ sudo urpmi autoconf automake coreutils curl diffutils gcc gcc-c++ git glibc-deve
 
 For x86_64 or aarch64 based computers
 
-sudo urpmi lib64ffi8 lib64gmp10 lib64gmp-devel lib64ncurses5 --auto
+sudo urpmi lib64ffi8 lib64gmp10 lib64gmp-devel lib64ncurses5 lib64ncurses- --auto
 
 For i686 based computers
 
@@ -72,10 +72,11 @@ curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
 Accept the default suggestions for each of the questions it asks you. You may need to close the terminal window and open it again for the changes to the $PATH to take effect.
 
 Footnote: Please keep track of changes to this command by reading the link at the top to visit the website for GHCUP so that you make sure to use the right command.
-You now need to install hscolour.
+Also, at the time of writing this guide the GHC version 9.6.7 (that gets installed with ghcup) complains about happy being to new so you need to also install an earlier 
+version of happy plus you also need to install hscolour.
 
 To do so run:
-cabal update && cabal install hscolour
+cabal update && cabal install happy-1.20.0 hscolour alex
 
 #################################################################################################
 
@@ -85,7 +86,7 @@ Run the follow in the terminal window
 git clone --recursive https://gitlab.haskell.org/ghc/ghc.git -b ghc-9.6.7-release
 cd ghc
 ./boot
-./configure --prefix=%{_prefix} --libdir=%{_libdir} --host=mageia --build=x86_64-linux-gnu
+./configure --prefix=%{_prefix} --build=x86_64-linux-gnu
 
 Footnote: Depending on many factors regarding the hardware your computer has this entire line of commands will take time so grab a cup of java or tea and maybe even a scone and just wait until you see something like this:
 
@@ -150,6 +151,9 @@ For more information on how to configure your GHC build, see
    https://gitlab.haskell.org/ghc/ghc/wikis/building
 
 #################################################################################################
+
+Note
+Sometimes ld is not detected properly in which case you need to add it manually by adding /usr/bin/ld to the relevant line in hadrian/cfg/system.config
 
 === OK, so how do I build GHC now? ===
 
